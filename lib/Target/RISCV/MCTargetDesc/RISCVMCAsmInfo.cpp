@@ -12,6 +12,8 @@
 
 #include "RISCVMCAsmInfo.h"
 #include "llvm/ADT/Triple.h"
+#include "llvm/BinaryFormat/Dwarf.h"
+#include "llvm/MC/MCStreamer.h"
 using namespace llvm;
 
 void RISCVMCAsmInfo::anchor() {}
@@ -25,4 +27,15 @@ RISCVMCAsmInfo::RISCVMCAsmInfo(const Triple &TT) {
   Data32bitsDirective = "\t.word\t";
 
   ExceptionsType = ExceptionHandling::DwarfCFI;
+}
+
+const MCExpr*
+RISCVMCAsmInfo::getExprForFDESymbol(const MCSymbol *Sym,
+                                    unsigned Encoding,
+                                    MCStreamer &Streamer) const {
+  MCContext &Ctx = Streamer.getContext();
+  if (Encoding | dwarf::DW_EH_PE_pcrel)
+    return MCSymbolRefExpr::create(Sym, MCSymbolRefExpr::VK_RISCV_PCREL, Ctx);
+  else
+    return MCSymbolRefExpr::create(Sym, Ctx);
 }

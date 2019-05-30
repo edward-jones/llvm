@@ -10,6 +10,7 @@
 #include "MCTargetDesc/RISCVMCTargetDesc.h"
 #include "llvm/MC/MCELFObjectWriter.h"
 #include "llvm/MC/MCFixup.h"
+#include "llvm/MC/MCValue.h"
 #include "llvm/MC/MCObjectWriter.h"
 #include "llvm/Support/ErrorHandling.h"
 
@@ -52,7 +53,10 @@ unsigned RISCVELFObjectWriter::getRelocType(MCContext &Ctx,
   default:
     llvm_unreachable("invalid fixup kind!");
   case FK_Data_4:
-    return ELF::R_RISCV_32;
+    if (Target.getAccessVariant() == MCSymbolRefExpr::VK_RISCV_PCREL)
+      return ELF::R_RISCV_32_PCREL;
+    else
+      return ELF::R_RISCV_32;
   case FK_Data_8:
     return ELF::R_RISCV_64;
   case FK_Data_Add_1:

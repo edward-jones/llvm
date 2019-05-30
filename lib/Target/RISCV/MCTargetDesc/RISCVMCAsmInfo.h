@@ -23,6 +23,10 @@ class RISCVMCAsmInfo : public MCAsmInfoELF {
 
 public:
   explicit RISCVMCAsmInfo(const Triple &TargetTriple);
+
+  const MCExpr* getExprForFDESymbol(const MCSymbol *Sym,
+                                    unsigned Encoding,
+                                    MCStreamer &Streamer) const override;
 };
 
 } // namespace llvm
