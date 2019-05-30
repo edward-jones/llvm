@@ -23,4 +23,6 @@ RISCVMCAsmInfo::RISCVMCAsmInfo(const Triple &TT) {
   SupportsDebugInformation = true;
   Data16bitsDirective = "\t.half\t";
   Data32bitsDirective = "\t.word\t";
+
+  ExceptionsType = ExceptionHandling::DwarfCFI;
 }
