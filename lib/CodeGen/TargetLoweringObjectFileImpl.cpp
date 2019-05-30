@@ -205,6 +205,27 @@ void TargetLoweringObjectFileELF::Initialize(MCContext &Ctx,
     TTypeEncoding = dwarf::DW_EH_PE_indirect | dwarf::DW_EH_PE_pcrel |
       dwarf::DW_EH_PE_udata8;
     break;
+  case Triple::riscv32:
+  case Triple::riscv64:
+    assert((CM == CodeModel::Small || CM == CodeModel::Medium)
+           && "unhandled code model");
+    if (isPositionIndependent()) {
+      PersonalityEncoding = dwarf::DW_EH_PE_indirect | dwarf::DW_EH_PE_pcrel |
+        dwarf::DW_EH_PE_sdata4;
+      LSDAEncoding = dwarf::DW_EH_PE_pcrel | dwarf::DW_EH_PE_sdata4;
+      TTypeEncoding = dwarf::DW_EH_PE_indirect | dwarf::DW_EH_PE_pcrel |
+        dwarf::DW_EH_PE_sdata4;
+    } else if (CM == CodeModel::Small) {
+      PersonalityEncoding = dwarf::DW_EH_PE_indirect | dwarf::DW_EH_PE_udata4;
+      LSDAEncoding = dwarf::DW_EH_PE_udata4;
+      TTypeEncoding = dwarf::DW_EH_PE_udata4;
+    } else {
+      assert(CM == CodeModel::Medium);
+      PersonalityEncoding = dwarf::DW_EH_PE_indirect | dwarf::DW_EH_PE_absptr;
+      LSDAEncoding = dwarf::DW_EH_PE_absptr;
+      TTypeEncoding = dwarf::DW_EH_PE_absptr;
+    }
+    break;
   case Triple::sparcel:
   case Triple::sparc:
     if (isPositionIndependent()) {
