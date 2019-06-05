@@ -244,6 +244,26 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
       }
     }
   } else {
+    // Check whether the target is the .eh_frame section. If so then
+    // evaluate whatever we can as absolute
+    const MCSectionELF *SymAELFSec = nullptr;
+    const MCSectionELF *SymBELFSec = nullptr;
+    if (const auto *A = Target.getSymA())
+      if (A->getSymbol().isInSection())
+        SymAELFSec = dyn_cast<const MCSectionELF>(&A->getSymbol().getSection());
+    if (const auto *B = Target.getSymB())
+      if (B->getSymbol().isInSection())
+        SymBELFSec = dyn_cast<const MCSectionELF>(&B->getSymbol().getSection());
+
+    bool TargetEHFrame = false;
+    if (SymAELFSec && SymAELFSec->getSectionName() == ".eh_frame")
+      TargetEHFrame = true;
+    if (SymBELFSec && SymBELFSec->getSectionName() != ".eh_frame")
+      TargetEHFrame = false;
+
+    if (TargetEHFrame)
+      Expr->evaluateAsValue(Target, Layout);
+
     IsResolved = Target.isAbsolute();
   }
 
