@@ -86,5 +86,24 @@ unreachable:
 ;                                             DW_EH_PE_sdata4
 ;   # Call site encoding #
 ; CHECK:      .Lttbaseref0:
+; CHECK-NEXT: .byte  3
+;                    ^-- Call site encoding: DW_EH_PE_udata4
+;   # Call sites #
+;   Unlike most other targets these are encoded as DW_EH_PE_udata4 instead
+;   of DW_EH_PE_uleb128, as we can't emit relocation for a difference between
+;   uleb128 encoded values.
+;
+; CHECK:      .Lcst_begin0:
+; CHECK-NEXT: .word  .Lfunc_begin0-.Lfunc_begin0
+; CHECK-NEXT: .word  .Ltmp0-.Lfunc_begin0
+; CHECK-NEXT: .word  0
+; CHECK-NEXT: .byte  0
+; CHECK-NEXT: .word  .Ltmp0-.Lfunc_begin0
+; CHECK-NEXT: .word  .Ltmp1-.Ltmp0
+; CHECK-NEXT: .word  .Ltmp2-.Lfunc_begin0
 ; CHECK-NEXT: .byte  1
-;                    ^-- Call site encoding: DW_EH_PE_uleb128
+; CHECK-NEXT: .word  .Ltmp1-.Lfunc_begin0
+; CHECK-NEXT: .word  .Lfunc_end0-.Ltmp1
+; CHECK-NEXT: .word  0
+; CHECK-NEXT: .byte  0
+; CHECK-NEXT: .Lcst_end0:
