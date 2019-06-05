@@ -225,6 +225,7 @@ void TargetLoweringObjectFileELF::Initialize(MCContext &Ctx,
       LSDAEncoding = dwarf::DW_EH_PE_absptr;
       TTypeEncoding = dwarf::DW_EH_PE_absptr;
     }
+    CallSiteEncoding = dwarf::DW_EH_PE_udata4;
     break;
   case Triple::sparcel:
   case Triple::sparc:
