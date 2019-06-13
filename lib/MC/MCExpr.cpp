@@ -611,8 +611,9 @@ EvaluateSymbolicAdd(const MCAssembler *Asm, const MCAsmLayout *Layout,
   // the InSet flag is set to get the current difference anyway (used for
   // example to calculate symbol sizes).
   if (Asm &&
-      (InSet || (LHS_A && !LHS_A->getSymbol().getSection().hasInstructions()) ||
-       (LHS_B && !LHS_B->getSymbol().getSection().hasInstructions()) ||
+      (InSet ||
+       (LHS_A && LHS_A->getSymbol().isInSection() && !LHS_A->getSymbol().getSection().hasInstructions()) ||
+       (LHS_B && LHS_B->getSymbol().isInSection() && !LHS_B->getSymbol().getSection().hasInstructions()) ||
        !Asm->getBackend().requiresDiffExpressionRelocations())) {
     // First, fold out any differences which are fully resolved. By
     // reassociating terms in
